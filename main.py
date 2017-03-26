@@ -8,11 +8,12 @@ explanation = ''
 title = ''
 hdurl = ''
 showImage = 1
-screenBrightness = 75
+screenBrightness = 70
 
 @every(hours=12)
 def get_data():
-    req = requests.get('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&hd=true')
+    apiKey = tingbot.app.settings['ApiKey']
+    req = requests.get('https://api.nasa.gov/planetary/apod?api_key=' + apiKey + '&hd=true')
     jsonResp = req.json()
    
     #PARSE CONTENT
@@ -39,23 +40,22 @@ def on_left():
 def on_midleft():
     global screenBrightness
     if(screenBrightness > 0):
-        screenBrightness = screenBrightness -5
+        screenBrightness = screenBrightness -10
     
 @midright_button.press
 def on_midright():
     global screenBrightness
     if(screenBrightness < 100):
-        screenBrightness = screenBrightness +5
+        screenBrightness = screenBrightness +10
 
 @every(seconds=1.0/30)
 def loop():
+    screen.brightness = screenBrightness
     if (showImage):
         screen.fill(color='black')
         if(hdurl!=''):
             screen.image(hdurl)
-        screen.brightness = screenBrightness
     else:
-        screen.brightness = screenBrightness
         screen.fill(color='black')
         screen.text(title, font_size=13, align='topleft')
         screen.text(explanation, font_size=11, align='bottomleft')
